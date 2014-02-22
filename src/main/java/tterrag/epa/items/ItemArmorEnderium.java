@@ -23,7 +23,7 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 	protected int capacity = 1000000;
 	protected ArmorType type;
 
-	private final int CHARGE_SPEED = 5000;
+	private final int CHARGE_SPEED = 5000, DAMAGE_BASE = 1250;
 
 	public static enum ArmorType
 	{
@@ -58,7 +58,7 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 		setCreativeTab(ThermalExpansion.tabItems);
 		setUnlocalizedName(unlocalized);
 		setMaxStackSize(1);
-		setMaxDamage(100);
+		setMaxDamage(101);
 	}
 
 	@Override
@@ -124,9 +124,9 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 	public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot)
 	{
 		if (armor.getTagCompound().getInteger("energy") <= 0)
-			return new ArmorProperties(0, 0, 0);
+			return new ArmorProperties(0, 0.25, 0);
 		
-		return new ArmorProperties(0, 0.25, Integer.MAX_VALUE);
+		return new ArmorProperties(0, 0.25, 80);
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 
 	private int getDamageFromEnergy(NBTTagCompound tag, int max)
 	{
-		return (int) (Math.abs((float) tag.getInteger("energy") / capacity - 1) * max);
+		return ((int) (Math.abs((float) tag.getInteger("energy") / capacity - 1) * max)) + 1;
 	}
 
 	@Override
@@ -159,12 +159,17 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 		{
 			NBTTagCompound tag = stack.getTagCompound();
 
-			int decrement =  tag.getInteger("energy") - new Random().nextInt(100000);
+			int decrement =  tag.getInteger("energy") - getDamage(damage);
 			tag.setInteger("energy", decrement <= 0 ? 0 : decrement);
 			stack.setItemDamage(getDamageFromEnergy(tag, stack.getMaxDamage()));
 
 			stack.stackTagCompound = tag;
 		}
+	}
+	
+	private int getDamage(int damageAmount)
+	{
+		return (new Random().nextInt(200) - 100 + (DAMAGE_BASE * damageAmount));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
