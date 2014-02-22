@@ -23,7 +23,7 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 	protected int capacity = 1000000;
 	protected ArmorType type;
 
-	private final int CHARGE_SPEED = 5000, DAMAGE_BASE = 1250;
+	private final int CHARGE_SPEED = 10000, DAMAGE_BASE = 1250;
 
 	public static enum ArmorType
 	{
