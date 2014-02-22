@@ -8,7 +8,6 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import thermalexpansion.ThermalExpansion;
 import cofh.api.energy.IEnergyContainerItem;
