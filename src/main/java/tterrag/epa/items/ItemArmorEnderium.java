@@ -20,10 +20,9 @@ import cpw.mods.fml.relauncher.Side;
 
 public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem, ISpecialArmor
 {
-	protected int capacity = 1000000;
 	protected ArmorType type;
 
-	private final int CHARGE_SPEED = 10000, DAMAGE_BASE = 1250;
+	private final int CHARGE_SPEED = 10000, DAMAGE_BASE = 1250, CAPACITY = 10000000;
 
 	public static enum ArmorType
 	{
@@ -82,7 +81,7 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 		{
 			NBTTagCompound tag = container.getTagCompound();
 
-			if (tag.getInteger("energy") < capacity)
+			if (tag.getInteger("energy") < CAPACITY)
 			{
 				tag.setInteger("energy", tag.getInteger("energy") + CHARGE_SPEED);
 				container.setItemDamage(getDamageFromEnergy(tag, container.getMaxDamage()));
@@ -117,7 +116,7 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 	@Override
 	public int getMaxEnergyStored(ItemStack container)
 	{
-		return capacity;
+		return CAPACITY;
 	}
 
 	@Override
@@ -149,7 +148,7 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 
 	private int getDamageFromEnergy(NBTTagCompound tag, int max)
 	{
-		return ((int) (Math.abs((float) tag.getInteger("energy") / capacity - 1) * max)) + 1;
+		return ((int) (Math.abs((float) tag.getInteger("energy") / CAPACITY - 1) * max)) + 1;
 	}
 
 	@Override
