@@ -1,7 +1,6 @@
 *.class
 
 # Package Files #
-*.jar
 *.war
 *.ear
 /build
@@ -9,3 +8,4 @@
 /bin
 
 *.classpath
+/.gradle
