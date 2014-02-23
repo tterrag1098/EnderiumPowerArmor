@@ -85,9 +85,16 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 			{
 				tag.setInteger("energy", tag.getInteger("energy") + CHARGE_SPEED);
 				container.setItemDamage(getDamageFromEnergy(tag, container.getMaxDamage()));
+				
+				int off = 0;
+				if (tag.getInteger("energy") > CAPACITY)
+				{
+					off = Math.abs(CAPACITY - tag.getInteger("energy"));
+					tag.setInteger("energy", tag.getInteger("energy") - off);
+				}
 
 				container.stackTagCompound = tag;
-				return CHARGE_SPEED;
+				return CHARGE_SPEED - off;
 			}
 			else
 				return 0;
