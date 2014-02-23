@@ -22,7 +22,7 @@ minecraft {
 }
 
 dependencies {
-    runtime fileTree(dir: 'deps', include: '*.jar')
+    compile fileTree(dir: 'deps', include: '*.jar')
 }
 
 processResources
