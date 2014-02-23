@@ -3,7 +3,6 @@
 # Package Files #
 *.war
 *.ear
-/build
 /eclipse
 /bin
 
