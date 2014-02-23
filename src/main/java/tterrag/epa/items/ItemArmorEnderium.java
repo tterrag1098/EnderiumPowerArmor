@@ -23,7 +23,10 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 {
 	protected ArmorType type;
 
-	private final int CHARGE_SPEED = 10000, DAMAGE_BASE = 1250, CAPACITY = 10000000;
+	private final int CHARGE_SPEED = 10000,
+			          DAMAGE_BASE = 2000, 
+			          DAMAGE_RAND = 200, 
+			          CAPACITY = 10000000;
 
 	public static enum ArmorType
 	{
@@ -91,24 +94,6 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 		}
 		container.setItemDamage(getDamageFromEnergy(container.stackTagCompound, container.getMaxDamage()));
 		return energyReceived;
-		/*
-		 * if (!simulate) { NBTTagCompound tag = container.getTagCompound();
-		 * 
-		 * if (tag.getInteger("energy") < CAPACITY) { tag.setInteger("energy",
-		 * tag.getInteger("energy") + ((maxReceive > CHARGE_SPEED) ?
-		 * CHARGE_SPEED : maxReceive));
-		 * container.setItemDamage(getDamageFromEnergy(tag,
-		 * container.getMaxDamage()));
-		 * 
-		 * int off = 0; if (tag.getInteger("energy") > CAPACITY) { off =
-		 * Math.abs(CAPACITY - tag.getInteger("energy"));
-		 * tag.setInteger("energy", tag.getInteger("energy") - off); }
-		 * 
-		 * container.stackTagCompound = tag; return maxReceive > CHARGE_SPEED ?
-		 * maxReceive - off : CHARGE_SPEED - off; } else return 0; } else {
-		 * container.setItemDamage(container.getItemDamage() - 3); return
-		 * CHARGE_SPEED; }
-		 */
 	}
 
 	@Override
@@ -137,6 +122,17 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 		if (armor.getTagCompound().getInteger("energy") <= 0)
 			return new ArmorProperties(0, 0.25, 0);
 
+		if (source == DamageSource.fall)
+		{
+			switch(slot)
+			{
+			case 0:
+				return new ArmorProperties(0, 1, 10000);
+			default:
+				return new ArmorProperties(0, 0, 10000);
+			}
+		}
+		
 		return new ArmorProperties(0, 0.25, 80);
 	}
 
@@ -170,17 +166,22 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 		{
 			NBTTagCompound tag = stack.getTagCompound();
 
-			int decrement = tag.getInteger("energy") - getDamage(damage);
-			tag.setInteger("energy", decrement <= 0 ? 0 : decrement);
+			int decrement = tag.getInteger("energy") - (getDamage(damage) * isFalling(source));
+			tag.setInteger("energy", (decrement <= 0 ? 0 : decrement));
 			stack.setItemDamage(getDamageFromEnergy(tag, stack.getMaxDamage()));
 
 			stack.stackTagCompound = tag;
 		}
 	}
+	
+	private int isFalling(DamageSource source)
+	{
+		return source == DamageSource.fall ? 4 : 1;
+	}
 
 	private int getDamage(int damageAmount)
 	{
-		return (new Random().nextInt(200) - 100 + (DAMAGE_BASE * damageAmount));
+		return (new Random().nextInt(DAMAGE_RAND) - (DAMAGE_RAND / 2) + (DAMAGE_BASE * damageAmount));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

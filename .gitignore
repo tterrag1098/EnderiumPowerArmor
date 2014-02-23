@@ -4,10 +4,10 @@
 *.jar
 *.war
 *.ear
-
-# eclipse files #
+/build
+/eclipse
+/gradle
+*.gradle
+gradlew*
+gradlew*
 /bin
-
-*.classpath
-*.project
-/.git
