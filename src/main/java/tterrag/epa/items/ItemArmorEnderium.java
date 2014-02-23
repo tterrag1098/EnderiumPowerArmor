@@ -3,6 +3,7 @@ package tterrag.epa.items;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -77,33 +78,37 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 	@Override
 	public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate)
 	{
+		if (container.stackTagCompound == null)
+		{
+			container.stackTagCompound = new NBTTagCompound();
+		}
+		int energy = container.stackTagCompound.getInteger("energy");
+		int energyReceived = Math.min(CAPACITY - energy, Math.min(this.CHARGE_SPEED, maxReceive));
 		if (!simulate)
 		{
-			NBTTagCompound tag = container.getTagCompound();
-
-			if (tag.getInteger("energy") < CAPACITY)
-			{
-				tag.setInteger("energy", tag.getInteger("energy") + CHARGE_SPEED);
-				container.setItemDamage(getDamageFromEnergy(tag, container.getMaxDamage()));
-				
-				int off = 0;
-				if (tag.getInteger("energy") > CAPACITY)
-				{
-					off = Math.abs(CAPACITY - tag.getInteger("energy"));
-					tag.setInteger("energy", tag.getInteger("energy") - off);
-				}
-
-				container.stackTagCompound = tag;
-				return CHARGE_SPEED - off;
-			}
-			else
-				return 0;
+			energy += energyReceived;
+			container.stackTagCompound.setInteger("energy", energy);
 		}
-		else
-		{
-			container.setItemDamage(container.getItemDamage() - 3);
-			return CHARGE_SPEED;
-		}
+		container.setItemDamage(getDamageFromEnergy(container.stackTagCompound, container.getMaxDamage()));
+		return energyReceived;
+		/*
+		 * if (!simulate) { NBTTagCompound tag = container.getTagCompound();
+		 * 
+		 * if (tag.getInteger("energy") < CAPACITY) { tag.setInteger("energy",
+		 * tag.getInteger("energy") + ((maxReceive > CHARGE_SPEED) ?
+		 * CHARGE_SPEED : maxReceive));
+		 * container.setItemDamage(getDamageFromEnergy(tag,
+		 * container.getMaxDamage()));
+		 * 
+		 * int off = 0; if (tag.getInteger("energy") > CAPACITY) { off =
+		 * Math.abs(CAPACITY - tag.getInteger("energy"));
+		 * tag.setInteger("energy", tag.getInteger("energy") - off); }
+		 * 
+		 * container.stackTagCompound = tag; return maxReceive > CHARGE_SPEED ?
+		 * maxReceive - off : CHARGE_SPEED - off; } else return 0; } else {
+		 * container.setItemDamage(container.getItemDamage() - 3); return
+		 * CHARGE_SPEED; }
+		 */
 	}
 
 	@Override
@@ -131,7 +136,7 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 	{
 		if (armor.getTagCompound().getInteger("energy") <= 0)
 			return new ArmorProperties(0, 0.25, 0);
-		
+
 		return new ArmorProperties(0, 0.25, 80);
 	}
 
@@ -165,14 +170,14 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 		{
 			NBTTagCompound tag = stack.getTagCompound();
 
-			int decrement =  tag.getInteger("energy") - getDamage(damage);
+			int decrement = tag.getInteger("energy") - getDamage(damage);
 			tag.setInteger("energy", decrement <= 0 ? 0 : decrement);
 			stack.setItemDamage(getDamageFromEnergy(tag, stack.getMaxDamage()));
 
 			stack.stackTagCompound = tag;
 		}
 	}
-	
+
 	private int getDamage(int damageAmount)
 	{
 		return (new Random().nextInt(200) - 100 + (DAMAGE_BASE * damageAmount));
@@ -183,7 +188,29 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
 	{
 		super.addInformation(par1ItemStack, par2EntityPlayer, par3List, par4);
-		par3List.add("Stored: " + (par1ItemStack.getTagCompound() == null ? "0 RF" : par1ItemStack.getTagCompound().getInteger("energy") + " RF"));
+		int amnt = (par1ItemStack.getTagCompound() == null ? 0 : par1ItemStack.getTagCompound().getInteger("energy"));
+		String fmt = "";
+		if (Integer.toString(amnt).length() < 5)
+			fmt += Integer.toString(amnt);
+		else
+		{
+			switch (Integer.toString(amnt).length())
+			{
+			case 5:
+				fmt = Integer.toString(amnt).substring(0, 2) + "." + Integer.toString(amnt).substring(2, 4) + "K";
+				break;
+			case 6:
+				fmt = Integer.toString(amnt).substring(0, 3) + "." + Integer.toString(amnt).substring(3, 5) + "K";
+				break;
+			case 7:
+				fmt = Integer.toString(amnt).substring(0, 1) + "." + Integer.toString(amnt).substring(1, 4) + "M";
+				break;
+			case 8:
+				fmt = Integer.toString(amnt).substring(0, 2) + "M";
+				break;
+			}
+		}
+		par3List.add("Stored: " + fmt + " / 10M RF");
 	}
 
 	@Override
@@ -208,6 +235,17 @@ public class ItemArmorEnderium extends ItemArmor implements IEnergyContainerItem
 
 		tag.setInteger("energy", 0);
 		stack.setTagCompound(tag);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
+	{
+		par3List.add(new ItemStack(this, 1, 101));
+		ItemStack i = new ItemStack(this, 1, 1);
+		i.stackTagCompound = new NBTTagCompound();
+		i.stackTagCompound.setInteger("energy", 10000000);
+		par3List.add(i);
 	}
 
 }

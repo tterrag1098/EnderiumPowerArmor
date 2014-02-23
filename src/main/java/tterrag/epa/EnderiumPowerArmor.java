@@ -5,7 +5,6 @@ import java.io.File;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import tterrag.epa.items.ItemArmorEnderium;
@@ -72,7 +71,7 @@ public class EnderiumPowerArmor
 		ItemStack ingot = thermalexpansion.item.TEItems.ingotEnderium.copy();
 		ItemStack capacitor = thermalexpansion.item.TEItems.capacitorResonant.copy();
 			
-		GameRegistry.addRecipe(new ItemStack(enderiumHelm), new Object[]{
+		GameRegistry.addRecipe(new ItemStack(enderiumHelm, 1, 101), new Object[]{
 			"iii",
 			"ici",
 			
@@ -80,7 +79,7 @@ public class EnderiumPowerArmor
 			'c', capacitor
 		});
 		
-		GameRegistry.addRecipe(new ItemStack(enderiumChest), new Object[]{
+		GameRegistry.addRecipe(new ItemStack(enderiumChest, 1, 101), new Object[]{
 			"i i",
 			"ici",
 			"iii",
@@ -89,7 +88,7 @@ public class EnderiumPowerArmor
 			'c', capacitor
 		});
 		
-		GameRegistry.addRecipe(new ItemStack(enderiumLegs), new Object[]{
+		GameRegistry.addRecipe(new ItemStack(enderiumLegs, 1, 101), new Object[]{
 			"iii",
 			"ici",
 			"i i",
@@ -98,7 +97,7 @@ public class EnderiumPowerArmor
 			'c', capacitor
 		});
 		
-		GameRegistry.addRecipe(new ItemStack(enderiumBoots), new Object[]{
+		GameRegistry.addRecipe(new ItemStack(enderiumBoots, 1, 101), new Object[]{
 			"i i",
 			"ici",
 			
