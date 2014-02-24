@@ -34,7 +34,7 @@ task buildInfo {
     }
 
     if (System.getenv().BUILD_NUMBER != null) {
-        ext.buildNum = "jenkins${System.getenv().BUILD_NUMBER}"
+        ext.buildNum = "${System.getenv().BUILD_NUMBER}"
     } else {
         ext.buildNum = "DEV.${project.buildInfo.revision}"
     }
@@ -47,7 +47,7 @@ if (System.getenv().ARTIFACT_VERSION != null) {
     artifact_version = "${system.getenv().ARTIFACT_VERSION}"
 }
 
-version = "${config.minecraft_version}-${artifact_version}"
+version = "${ext.revision}-MC${config.minecraft_version}-${ext.buildNum}"
 
 minecraft {
 	version = "1.6.4-9.11.1.964"
