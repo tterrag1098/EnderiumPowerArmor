@@ -47,7 +47,7 @@ if (System.getenv().ARTIFACT_VERSION != null) {
     artifact_version = "${system.getenv().ARTIFACT_VERSION}"
 }
 
-version = "_MC${config.minecraft_version}_${artifact_version}-${System.getenv().BUILD_NUMBER}"
+version = "MC${config.minecraft_version}-${artifact_version}-${System.getenv().BUILD_NUMBER}"
 
 minecraft {
 	version = "1.6.4-9.11.1.964"
